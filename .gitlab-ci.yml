@@ -1,0 +1,11 @@
+image: clojure:tools-deps
+
+
+before_script:
+  - clojure -Stree
+
+
+test:
+  script:
+  - echo Hello, World
+  - ls -al
