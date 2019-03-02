@@ -1,0 +1,5 @@
+#+TITLE: GitLab-CI Clojure Example
+#+AUTHOR: aJchemist
+
+
+https://about.gitlab.com/solutions/github/
