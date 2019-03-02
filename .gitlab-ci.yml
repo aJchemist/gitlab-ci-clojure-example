@@ -1,47 +1,22 @@
+variables:
+  MVN_LOCAL_REPO: "$CI_PROJECT_DIR/.m2/repository"
+  GITLIBS: "$CI_PROJECT_DIR/.gitlibs"
+  # using with optimized gitlab-runner instance (docker executor)
+  # HOME: /root
+  # MVN_LOCAL_REPO: "$HOME/.m2/repository"
+  # GITLIBS: "$HOME/.gitlibs"
+
+
+
 # caching don't works for outside repository
-.cache:
+cache:
   paths:
-    - .m2
+    - .m2/repository
     - .gitlibs
 
 
 before_script:
-  # - uname -a
-  # - ls -al
-  # - clojure -Stree
-  # - 'if ! test -d /cache; then echo "No such directory: /cache";  exit 1; fi'
-
-  # - mkdir -p .m2
-  # - mkdir -p .gitlibs
-  # - export GITLIBS="$(pwd)/.gitlibs"
-  # - echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd"><localRepository>'$(pwd)/.m2'</localRepository></settings>' > $HOME/.m2/settings.xml
-
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
-  # - 'which rsync || ( apt-get update -y && apt-get install rsync -y )'
-  # - 'which ssh-agent || ( apk add --no-cache openssh-client git rsync )'
-  - eval $(ssh-agent -s)
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-  - chmod 644 ~/.ssh/known_hosts
-
-
-# Deprecated
-.ssh_agent:
-  stage: ssh_agent
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
-    - eval $(ssh-agent -s)
-    - chmod 600 .ssh/id_ecdsa
-    - ssh-add .ssh/id_ecdsa
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - ssh-add -l
-    - git clone git@gitlab.com:aJchemist/gitlab-clojure-example-deps.git
+  - uname -a
 
 
 test:
@@ -49,22 +24,7 @@ test:
     - master
   tags:
     - docker
-    - tmnet
-  image: clojure:tools-deps
+  image: clojure:openjdk-8-tools-deps-alpine
   script:
-    - uname -a
-    - ls -al
-    - echo Hello, World
-    # - rm -rf $HOME/.m2
-    # - rm -rf $HOME/.gitlibs
-    # - mkdir -p /cache/.m2
-    # - mkdir -p /cache/.gitlibs
-    # - ln -s /cache/.m2 $HOME/.m2
-    # - ln -s /cache/.gitlibs $HOME/.gitlibs
-    # - rsync -a $(pwd)/.m2/ ~/.m2/
-    # - rm -rf ~/.m2
-    # - ln -s $(pwd)/.m2 ~/.m2
-    - clojure -Sdeps '{:deps {aJchemist/gitlab-clojure-example-deps {:git/url "git@gitlab.com:aJchemist/gitlab-clojure-example-deps.git" :sha "1761b49307bd1011db998d1b10724b2f4505b1d6"}}}' -m gitlab-clojure-example-deps.main
-    # - ls -al .gitlibs
-    # - ls -al .m2
-    # - rsync -a ~/.m2/ $(pwd)/.m2/
+    - clojure -Sdeps "{:mvn/local-repo \"$MVN_LOCAL_REPO\"}" -Stree
+    - clojure -Sdeps "{:mvn/local-repo \"$MVN_LOCAL_REPO\"}" -m gitlab-ci-clojure-example.main
