@@ -2,4 +2,7 @@
 #+AUTHOR: aJchemist
 
 
+[[https://gitlab.com/aJchemist-github-public/gitlab-ci-clojure-example/pipelines][https://img.shields.io/gitlab/pipeline/aJchemist-github-public/gitlab-ci-clojure-example.svg?style=flat-square]]
+
+
 https://about.gitlab.com/solutions/github/
